@@ -1,0 +1,15 @@
+{
+  "name": "Project Art Travel",
+  "short_name": "Art Travel",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#0F172A",
+  "theme_color": "#D4AF37",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3177/3177440.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
