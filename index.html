@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#D4AF37">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3177/3177440.png">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Project Art Travel - Art Map & Discovery</title>
+
+    <!-- PWA Meta Tags & App Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#D4AF37">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="arttavel logo.PNG">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -42,43 +44,24 @@
     </script>
 
     <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            overflow: hidden;
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; overflow: hidden; touch-action: manipulation; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        #map { height: 100vh; width: 100%; z-index: 1; background: #0B0F19; }
         
-        .font-serif {
-            font-family: 'Playfair Display', serif;
-        }
-
-        #map {
-            height: 100vh;
-            width: 100%;
-            z-index: 1;
-            background: #0B0F19;
-        }
-
-        /* Custom Popup Styling */
         .leaflet-popup-content-wrapper {
             background: #1E293B !important;
             color: #F8FAFC !important;
             border-radius: 1rem !important;
             padding: 0 !important;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.3) !important;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
             overflow: hidden;
         }
-        .leaflet-popup-tip {
-            background: #1E293B !important;
-        }
-        .leaflet-popup-content {
-            margin: 0 !important;
-            width: 300px !important;
-        }
+        .leaflet-popup-tip { background: #1E293B !important; }
+        .leaflet-popup-content { margin: 0 !important; width: 290px !important; }
 
-        /* Glassmorphism Sidebar */
         .glass-panel {
-            background: rgba(15, 23, 42, 0.88);
+            background: rgba(15, 23, 42, 0.94);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border-right: 1px solid rgba(255, 255, 255, 0.08);
@@ -90,22 +73,10 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 5px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.5);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(212, 175, 55, 0.4);
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(212, 175, 55, 0.8);
-        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
+        ::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.4); border-radius: 4px; }
 
-        /* Marker Pulse Effects */
         .custom-marker {
             display: flex;
             align-items: center;
@@ -113,7 +84,7 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .custom-marker:hover {
-            transform: scale(1.25) translateY(-5px);
+            transform: scale(1.2) translateY(-4px);
             z-index: 1000 !important;
         }
 
@@ -121,81 +92,72 @@
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
         }
-        .animate-fadeIn {
-            animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
+        .animate-fadeIn { animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     </style>
 </head>
-<body class="bg-art-dark text-slate-100 h-screen w-screen relative">
+<body class="bg-art-dark text-slate-100 h-screen w-screen relative select-none">
 
-    <header class="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-4 py-3 md:px-6 pointer-events-none">
-        <div class="flex items-center gap-3 pointer-events-auto bg-slate-900/80 backdrop-blur-md border border-white/10 px-4 py-2 rounded-2xl shadow-2xl">
-            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-art-gold to-art-accent flex items-center justify-center text-slate-950 font-bold text-lg shadow-lg shadow-art-gold/20">
+    <header class="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-3 py-3 md:px-6 pointer-events-none">
+        <div class="flex items-center gap-2.5 pointer-events-auto bg-slate-900/90 backdrop-blur-md border border-white/10 px-3.5 py-2 rounded-2xl shadow-2xl">
+            <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-art-gold to-art-accent flex items-center justify-center text-slate-950 font-bold text-base shadow-lg shadow-art-gold/20">
                 <i class="fa-solid fa-palette text-slate-900"></i>
             </div>
             <div>
-                <h1 class="font-serif font-bold text-lg leading-none tracking-wide text-white">PROJECT ART TRAVEL</h1>
-                <p class="text-[10px] text-amber-400 font-medium tracking-wider uppercase mt-0.5">Curated Art Map & Spaces</p>
+                <h1 class="font-serif font-bold text-base md:text-lg leading-none tracking-wide text-white">PROJECT ART TRAVEL</h1>
+                <p class="text-[9px] text-amber-400 font-medium tracking-wider uppercase mt-0.5">Curated Art Map & Spaces</p>
             </div>
         </div>
 
-        <!-- Action Buttons -->
         <div class="flex items-center gap-2 pointer-events-auto">
-            <button id="addSpotBtn" class="flex items-center gap-2 bg-gradient-to-r from-art-gold to-amber-500 hover:from-amber-400 hover:to-art-gold text-slate-950 font-semibold px-4 py-2 rounded-xl shadow-lg transition-all transform hover:scale-105 active:scale-95 text-xs md:text-sm">
+            <button id="addSpotBtn" class="flex items-center gap-1.5 bg-gradient-to-r from-art-gold to-amber-500 hover:from-amber-400 hover:to-art-gold text-slate-950 font-semibold px-3.5 py-2 rounded-xl shadow-lg transition-all transform active:scale-95 text-xs md:text-sm">
                 <i class="fa-solid fa-plus text-xs"></i>
-                <span>Add Art Spot</span>
+                <span>Add Spot</span>
             </button>
-            <button id="toggleSidebarBtn" class="md:hidden bg-slate-800/90 text-white p-2.5 rounded-xl border border-white/10 shadow-lg">
+            <button id="toggleSidebarBtn" class="md:hidden bg-slate-800/90 text-white p-2.5 rounded-xl border border-white/10 shadow-lg active:scale-95">
                 <i class="fa-solid fa-bars text-lg"></i>
             </button>
         </div>
     </header>
 
-    <aside id="sidebar" class="fixed top-0 left-0 bottom-0 w-full sm:w-96 glass-panel z-30 pt-20 pb-6 px-4 flex flex-col transition-transform duration-300 ease-in-out md:translate-x-0 -translate-x-full">
+    <!-- Sidebar Responsive Menu -->
+    <aside id="sidebar" class="fixed top-0 left-0 bottom-0 w-full sm:w-96 glass-panel z-30 pt-16 md:pt-20 pb-6 px-4 flex flex-col transition-transform duration-300 ease-in-out md:translate-x-0 -translate-x-full">
         
+        <!-- Mobile Close/Back to Map Button -->
+        <div class="md:hidden flex justify-between items-center mb-3 pt-2 pb-1 border-b border-white/10">
+            <span class="text-xs font-semibold text-art-gold"><i class="fa-solid fa-list mr-1"></i> Space Catalog</span>
+            <button id="closeSidebarBtn" class="bg-art-gold/20 hover:bg-art-gold/30 text-art-gold px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors">
+                <span>Go to Map</span>
+                <i class="fa-solid fa-map"></i>
+            </button>
+        </div>
+
         <!-- Search & Filter Bar -->
-        <div class="space-y-3 mb-4">
+        <div class="space-y-3 mb-3">
             <div class="relative">
                 <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                <input type="text" id="searchInput" placeholder="Search gallery, artist, space..." class="w-full bg-slate-800/80 text-sm text-white placeholder-slate-400 pl-10 pr-4 py-2.5 rounded-xl border border-white/10 focus:outline-none focus:border-art-gold transition-colors">
+                <input type="text" id="searchInput" placeholder="Search gallery, artist, space..." class="w-full bg-slate-800/80 text-sm text-white placeholder-slate-400 pl-10 pr-4 py-2 rounded-xl border border-white/10 focus:outline-none focus:border-art-gold transition-colors">
             </div>
 
             <!-- Categories Tabs -->
             <div class="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar text-xs">
-                <button data-category="all" class="filter-tab active bg-art-gold text-slate-950 font-semibold px-3 py-1.5 rounded-lg whitespace-nowrap transition-all">
-                    All Spaces
-                </button>
-                <button data-category="Gallery" class="filter-tab bg-slate-800/80 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg whitespace-nowrap border border-white/5 transition-all">
-                    🎨 Gallery
-                </button>
-                <button data-category="Art Space" class="filter-tab bg-slate-800/80 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg whitespace-nowrap border border-white/5 transition-all">
-                    🏛️ Art Space
-                </button>
-                <button data-category="Museum" class="filter-tab bg-slate-800/80 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg whitespace-nowrap border border-white/5 transition-all">
-                    🖼️ Museum
-                </button>
-                <button data-category="Studio" class="filter-tab bg-slate-800/80 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg whitespace-nowrap border border-white/5 transition-all">
-                    ✨ Studio
-                </button>
+                <button data-category="all" class="filter-tab active bg-art-gold text-slate-950 font-semibold px-3 py-1.5 rounded-lg whitespace-nowrap transition-all">All Spaces</button>
+                <button data-category="Gallery" class="filter-tab bg-slate-800/80 text-slate-300 px-3 py-1.5 rounded-lg whitespace-nowrap border border-white/5 transition-all">🎨 Gallery</button>
+                <button data-category="Art Space" class="filter-tab bg-slate-800/80 text-slate-300 px-3 py-1.5 rounded-lg whitespace-nowrap border border-white/5 transition-all">🏛️ Art Space</button>
+                <button data-category="Museum" class="filter-tab bg-slate-800/80 text-slate-300 px-3 py-1.5 rounded-lg whitespace-nowrap border border-white/5 transition-all">🖼️ Museum</button>
+                <button data-category="Studio" class="filter-tab bg-slate-800/80 text-slate-300 px-3 py-1.5 rounded-lg whitespace-nowrap border border-white/5 transition-all">✨ Studio</button>
             </div>
             
-            <!-- Controls, Backup (Export/Import) & Stats -->
+            <!-- Backup & Controls -->
             <div class="flex justify-between items-center text-[11px] text-slate-400 px-1 pt-1 border-t border-white/5">
                 <span id="spotCount">Showing 0 places</span>
                 <div class="flex items-center gap-2">
-                    <button onclick="exportData()" title="Backup / Export JSON" class="text-amber-400 hover:text-amber-300 transition-colors flex items-center gap-1">
-                        <i class="fa-solid fa-file-arrow-down"></i> Export
-                    </button>
-                    <label title="Restore / Import JSON" class="text-amber-400 hover:text-amber-300 transition-colors flex items-center gap-1 cursor-pointer">
+                    <button onclick="exportData()" title="Export Backup" class="text-amber-400 hover:text-amber-300 flex items-center gap-1"><i class="fa-solid fa-file-arrow-down"></i> Export</button>
+                    <label title="Import Backup" class="text-amber-400 hover:text-amber-300 flex items-center gap-1 cursor-pointer">
                         <i class="fa-solid fa-file-arrow-up"></i> Import
                         <input type="file" id="importFile" accept=".json" class="hidden" onchange="importData(event)">
                     </label>
-                    <button id="showFavoritesBtn" class="text-amber-400 hover:underline flex items-center gap-1">
-                        <i class="fa-solid fa-bookmark"></i> Fav (<span id="favCount">0</span>)
-                    </button>
-                    <button id="resetDataBtn" title="Reset to default places" class="text-slate-400 hover:text-red-400 transition-colors">
-                        <i class="fa-solid fa-rotate-left"></i>
-                    </button>
+                    <button id="showFavoritesBtn" class="text-amber-400 hover:underline flex items-center gap-1"><i class="fa-solid fa-bookmark"></i> Fav (<span id="favCount">0</span>)</button>
+                    <button id="resetDataBtn" title="Reset defaults" class="text-slate-400 hover:text-red-400"><i class="fa-solid fa-rotate-left"></i></button>
                 </div>
             </div>
         </div>
@@ -203,9 +165,7 @@
         <!-- Walking Info Banner -->
         <div id="walkingBanner" class="hidden mb-3 p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs space-y-1.5">
             <div class="flex justify-between items-start">
-                <span class="font-bold text-amber-400 flex items-center gap-1">
-                    <i class="fa-solid fa-person-walking"></i> Walking Route Info
-                </span>
+                <span class="font-bold text-amber-400 flex items-center gap-1"><i class="fa-solid fa-person-walking"></i> Route Info</span>
                 <button onclick="clearWalkingRoute()" class="text-slate-400 hover:text-white text-[10px]">Clear</button>
             </div>
             <div class="text-slate-200 text-[11px] space-y-1">
@@ -216,62 +176,57 @@
                     <span>⏱️ Walk: ~<span id="routeTime">0 mins</span></span>
                 </div>
             </div>
-            <a id="gmapsNavBtn" href="#" target="_blank" class="block text-center w-full py-1.5 bg-art-gold text-slate-950 font-bold rounded-lg hover:bg-amber-400 transition-colors text-[11px] mt-1">
-                <i class="fa-solid fa-diamond-turn-right mr-1"></i> Open Google Maps Walk Nav
+            <a id="gmapsNavBtn" href="#" target="_blank" class="block text-center w-full py-1.5 bg-art-gold text-slate-950 font-bold rounded-lg hover:bg-amber-400 text-[11px] mt-1">
+                <i class="fa-solid fa-diamond-turn-right mr-1"></i> Open Google Maps Navigation
             </a>
         </div>
 
         <!-- Places List -->
-        <div id="placesList" class="flex-1 overflow-y-auto space-y-3 pr-1">
-            <!-- Dynamic place cards -->
-        </div>
+        <div id="placesList" class="flex-1 overflow-y-auto space-y-2.5 pr-1"></div>
 
-        <!-- Footer Info -->
-        <div class="mt-4 pt-3 border-t border-white/10 text-center text-xs text-slate-500 flex justify-between items-center">
+        <div class="mt-3 pt-2 border-t border-white/10 text-center text-xs text-slate-500 flex justify-between items-center">
             <span>Project Art Travel © 2026</span>
-            <span class="text-art-gold font-medium">Unified Explorer Edition</span>
+            <span class="text-art-gold font-medium">Mobile Optimized</span>
         </div>
     </aside>
 
     <!-- Map Layer Switcher Control -->
-    <div class="absolute top-20 right-4 z-20 bg-slate-900/90 backdrop-blur-md border border-white/10 rounded-2xl p-1.5 shadow-xl flex gap-1 text-xs">
-        <button id="layerDarkBtn" onclick="switchMapLayer('dark')" class="px-2.5 py-1.5 rounded-xl font-medium bg-art-gold text-slate-950 transition-all">Dark</button>
-        <button id="layerGoogleBtn" onclick="switchMapLayer('google')" class="px-2.5 py-1.5 rounded-xl font-medium text-slate-300 hover:text-white transition-all">Google Map</button>
-        <button id="layerSatelliteBtn" onclick="switchMapLayer('satellite')" class="px-2.5 py-1.5 rounded-xl font-medium text-slate-300 hover:text-white transition-all">Google Satellite</button>
+    <div class="absolute top-16 md:top-20 right-3 md:right-4 z-20 bg-slate-900/90 backdrop-blur-md border border-white/10 rounded-2xl p-1 shadow-xl flex gap-1 text-[11px] md:text-xs">
+        <button id="layerDarkBtn" onclick="switchMapLayer('dark')" class="px-2 py-1 md:px-2.5 md:py-1.5 rounded-xl font-medium bg-art-gold text-slate-950 transition-all">Dark</button>
+        <button id="layerGoogleBtn" onclick="switchMapLayer('google')" class="px-2 py-1 md:px-2.5 md:py-1.5 rounded-xl font-medium text-slate-300 transition-all">Google Map</button>
+        <button id="layerSatelliteBtn" onclick="switchMapLayer('satellite')" class="px-2 py-1 md:px-2.5 md:py-1.5 rounded-xl font-medium text-slate-300 transition-all">Satellite</button>
     </div>
 
     <!-- Map Container -->
     <div id="map"></div>
 
-    <div class="absolute bottom-6 right-6 z-20 flex flex-col gap-2">
-        <button id="myLocationBtn" onclick="getUserLocation()" title="My Location GPS" class="w-11 h-11 bg-slate-900/90 hover:bg-slate-800 text-white rounded-2xl border border-white/10 shadow-xl flex items-center justify-center transition-transform active:scale-90">
-            <i class="fa-solid fa-location-crosshairs text-lg text-amber-400"></i>
+    <!-- Map Floating Buttons (GPS / Recenter) -->
+    <div class="absolute bottom-5 right-4 z-20 flex flex-col gap-2">
+        <button id="myLocationBtn" onclick="getUserLocation()" title="GPS Location" class="w-10 h-10 md:w-11 md:h-11 bg-slate-900/90 hover:bg-slate-800 text-white rounded-2xl border border-white/10 shadow-xl flex items-center justify-center active:scale-90">
+            <i class="fa-solid fa-location-crosshairs text-base md:text-lg text-amber-400"></i>
         </button>
-        <button id="recenterBtn" title="Recenter Map" class="w-11 h-11 bg-slate-900/90 hover:bg-slate-800 text-white rounded-2xl border border-white/10 shadow-xl flex items-center justify-center transition-transform active:scale-90">
-            <i class="fa-solid fa-crosshairs text-lg text-art-gold"></i>
+        <button id="recenterBtn" title="Recenter" class="w-10 h-10 md:w-11 md:h-11 bg-slate-900/90 hover:bg-slate-800 text-white rounded-2xl border border-white/10 shadow-xl flex items-center justify-center active:scale-90">
+            <i class="fa-solid fa-crosshairs text-base md:text-lg text-art-gold"></i>
         </button>
     </div>
 
-    <!-- Add/Edit Modal -->
-    <div id="spotModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden p-4">
-        <div class="bg-slate-900 border border-white/10 w-full max-w-md rounded-2xl p-6 shadow-2xl relative animate-fadeIn">
-            <button id="closeModalBtn" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-            
-            <h3 id="modalTitle" class="font-serif text-xl font-bold text-white mb-1">Add New Art Spot</h3>
-            <p id="modalSubtitle" class="text-xs text-slate-400 mb-4">Contribute a new creative space to the Art Travel community.</p>
+    <!-- Modal Form (Add / Edit Spot) -->
+    <div id="spotModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm hidden p-4">
+        <div class="bg-slate-900 border border-white/10 w-full max-w-md rounded-2xl p-5 shadow-2xl relative animate-fadeIn max-h-[90vh] overflow-y-auto">
+            <button id="closeModalBtn" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 id="modalTitle" class="font-serif text-lg md:text-xl font-bold text-white mb-0.5">Add New Art Spot</h3>
+            <p id="modalSubtitle" class="text-xs text-slate-400 mb-3">Contribute a new creative space.</p>
 
-            <form id="spotForm" class="space-y-3">
+            <form id="spotForm" class="space-y-3 text-xs">
                 <input type="hidden" id="spotId">
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Spot Name</label>
+                    <label class="block font-medium text-slate-300 mb-1">Spot Name</label>
                     <input type="text" id="spotName" required placeholder="e.g. Warehouse 30" class="w-full bg-slate-800 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-art-gold">
                 </div>
                 
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-2 gap-2.5">
                     <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Category</label>
+                        <label class="block font-medium text-slate-300 mb-1">Category</label>
                         <select id="spotType" class="w-full bg-slate-800 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-art-gold">
                             <option value="Gallery">Gallery</option>
                             <option value="Art Space">Art Space</option>
@@ -280,177 +235,86 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Opening Hours</label>
+                        <label class="block font-medium text-slate-300 mb-1">Opening Hours</label>
                         <input type="text" id="spotHours" placeholder="10:00 - 19:00" class="w-full bg-slate-800 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-art-gold">
                     </div>
                 </div>
 
                 <div>
-                    <div class="flex items-center justify-between mb-1">
-                        <label class="block text-xs font-medium text-slate-300">Google Maps Coordinates or Link</label>
-                        <span class="text-[10px] text-amber-400/80">e.g. 13.7275, 100.5135</span>
-                    </div>
+                    <label class="block font-medium text-slate-300 mb-1">Coordinates or Google Maps Link</label>
                     <div class="relative">
                         <i class="fa-solid fa-map-pin absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                        <input type="text" id="spotLocationInput" required placeholder="13.7275, 100.5135 or paste Google Maps URL" class="w-full bg-slate-800 border border-white/10 rounded-xl pl-8 pr-3 py-2 text-sm text-white focus:outline-none focus:border-art-gold">
+                        <input type="text" id="spotLocationInput" required placeholder="13.7275, 100.5135 or Maps URL" class="w-full bg-slate-800 border border-white/10 rounded-xl pl-8 pr-3 py-2 text-sm text-white focus:outline-none focus:border-art-gold">
                     </div>
-                    <p id="locationError" class="text-[10px] text-red-400 mt-1 hidden">
-                        <i class="fa-solid fa-circle-exclamation mr-1"></i>Invalid coordinates or link. Please paste lat, long (e.g. 13.7, 100.5) or Google Maps URL.
-                    </p>
+                    <p id="locationError" class="text-[10px] text-red-400 mt-1 hidden"><i class="fa-solid fa-circle-exclamation mr-1"></i>Invalid coordinates or link.</p>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Image URL (Optional)</label>
+                    <label class="block font-medium text-slate-300 mb-1">Image URL (Optional)</label>
                     <input type="url" id="spotImg" placeholder="https://images.unsplash.com/..." class="w-full bg-slate-800 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-art-gold">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Description</label>
-                    <textarea id="spotDesc" rows="3" placeholder="Brief summary about the exhibits, vibe, or entry info..." class="w-full bg-slate-800 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-art-gold resize-none"></textarea>
+                    <label class="block font-medium text-slate-300 mb-1">Description</label>
+                    <textarea id="spotDesc" rows="3" placeholder="Brief summary..." class="w-full bg-slate-800 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-art-gold resize-none"></textarea>
                 </div>
 
-                <div class="pt-2 flex justify-end gap-2">
-                    <button type="button" id="cancelModalBtn" class="px-4 py-2 text-xs text-slate-400 hover:text-white rounded-xl">Cancel</button>
-                    <button type="submit" class="px-5 py-2 text-xs font-semibold bg-art-gold text-slate-950 rounded-xl hover:bg-amber-400 transition-colors">Save Art Spot</button>
+                <div class="pt-1 flex justify-end gap-2">
+                    <button type="button" id="cancelModalBtn" class="px-4 py-2 text-slate-400 hover:text-white rounded-xl">Cancel</button>
+                    <button type="submit" class="px-5 py-2 font-semibold bg-art-gold text-slate-950 rounded-xl hover:bg-amber-400 transition-colors">Save Art Spot</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Delete Modal -->
-    <div id="deleteModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden p-4">
-        <div class="bg-slate-900 border border-white/10 w-full max-w-sm rounded-2xl p-6 shadow-2xl relative animate-fadeIn text-center">
-            <div class="w-12 h-12 bg-red-500/10 text-red-400 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">
-                <i class="fa-solid fa-trash-can"></i>
-            </div>
-            <h3 class="font-serif text-lg font-bold text-white mb-1">Delete Location?</h3>
-            <p id="deleteSpotName" class="text-xs text-slate-300 mb-5 font-medium">Are you sure you want to remove this location?</p>
-            <div class="flex items-center justify-center gap-3">
-                <button id="cancelDeleteBtn" class="px-4 py-2 text-xs text-slate-400 hover:text-white rounded-xl bg-slate-800 border border-white/10">Cancel</button>
-                <button id="confirmDeleteBtn" class="px-5 py-2 text-xs font-semibold bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20">Delete</button>
+    <div id="deleteModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm hidden p-4">
+        <div class="bg-slate-900 border border-white/10 w-full max-w-sm rounded-2xl p-5 shadow-2xl relative animate-fadeIn text-center">
+            <div class="w-10 h-10 bg-red-500/10 text-red-400 rounded-full flex items-center justify-center mx-auto mb-2 text-lg"><i class="fa-solid fa-trash-can"></i></div>
+            <h3 class="font-serif text-base font-bold text-white mb-1">Delete Location?</h3>
+            <p id="deleteSpotName" class="text-xs text-slate-300 mb-4 font-medium">Are you sure?</p>
+            <div class="flex items-center justify-center gap-2.5">
+                <button id="cancelDeleteBtn" class="px-4 py-1.5 text-xs text-slate-400 rounded-xl bg-slate-800 border border-white/10">Cancel</button>
+                <button id="confirmDeleteBtn" class="px-5 py-1.5 text-xs font-semibold bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors">Delete</button>
             </div>
         </div>
     </div>
 
     <script>
         const initialSpots = [
-            {
-                id: "1",
-                name: "MOCA Bangkok (Museum of Contemporary Art)",
-                type: "Museum",
-                lat: 13.8525,
-                lng: 100.5627,
-                hours: "10:00 - 18:00 (Closed Mon)",
-                img: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80",
-                desc: "A stunning multi-story museum showcasing modern art and sculptures from master Thai artists in a serene architectural monument."
-            },
-            {
-                id: "2",
-                name: "Warehouse 30",
-                type: "Art Space",
-                lat: 13.7275,
-                lng: 100.5135,
-                hours: "11:00 - 20:00 Daily",
-                img: "https://images.unsplash.com/photo-1518998053901-5348d3961a04?auto=format&fit=crop&w=600&q=80",
-                desc: "Renovated WW2 warehouses in Charoenkrung converted into contemporary art galleries, design stores, and creative event spaces."
-            },
-            {
-                id: "3",
-                name: "BACC (Bangkok Art & Culture Centre)",
-                type: "Art Space",
-                lat: 13.7466,
-                lng: 100.5303,
-                hours: "10:00 - 20:00 (Closed Mon)",
-                img: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=600&q=80",
-                desc: "The central hub for Bangkok's visual arts, featuring rotating contemporary exhibits, shops, craft cafes, and performative arts."
-            },
-            {
-                id: "4",
-                name: "ATT 19",
-                type: "Gallery",
-                lat: 13.7258,
-                lng: 100.5152,
-                hours: "11:00 - 18:00 (Closed Mon)",
-                img: "https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?auto=format&fit=crop&w=600&q=80",
-                desc: "A multidisciplinary art gallery housed in a 120-year-old former Chinese school, blending antique aesthetic with modern installations."
-            },
-            {
-                id: "5",
-                name: "Tang Contemporary Art",
-                type: "Gallery",
-                lat: 13.7262,
-                lng: 100.5139,
-                hours: "11:00 - 19:00 (Closed Mon)",
-                img: "https://images.unsplash.com/photo-1572947650440-e8a97ef053b2?auto=format&fit=crop&w=600&q=80",
-                desc: "Leading international contemporary art gallery at River City Bangkok representing acclaimed Asian artists and ground-breaking works."
-            },
-            {
-                id: "6",
-                name: "Speedy Grandma",
-                type: "Studio",
-                lat: 13.7342,
-                lng: 100.5158,
-                hours: "13:00 - 19:00 (Closed Mon, Tue)",
-                img: "https://images.unsplash.com/photo-1561214115-f2f134cc4912?auto=format&fit=crop&w=600&q=80",
-                desc: "An iconic grassroots underground gallery space pushing experimental art, local artist residency, and indie art culture."
-            }
+            { id: "1", name: "MOCA Bangkok (Museum of Contemporary Art)", type: "Museum", lat: 13.8525, lng: 100.5627, hours: "10:00 - 18:00 (Closed Mon)", img: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80", desc: "A stunning multi-story museum showcasing modern art and sculptures." },
+            { id: "2", name: "Warehouse 30", type: "Art Space", lat: 13.7275, lng: 100.5135, hours: "11:00 - 20:00 Daily", img: "https://images.unsplash.com/photo-1518998053901-5348d3961a04?auto=format&fit=crop&w=600&q=80", desc: "Renovated WW2 warehouses in Charoenkrung converted into creative spaces." },
+            { id: "3", name: "BACC (Bangkok Art & Culture Centre)", type: "Art Space", lat: 13.7466, lng: 100.5303, hours: "10:00 - 20:00 (Closed Mon)", img: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=600&q=80", desc: "The central hub for Bangkok's visual arts featuring rotating exhibits." },
+            { id: "4", name: "ATT 19", type: "Gallery", lat: 13.7258, lng: 100.5152, hours: "11:00 - 18:00 (Closed Mon)", img: "https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?auto=format&fit=crop&w=600&q=80", desc: "A multidisciplinary art gallery housed in a 120-year-old former school." },
+            { id: "5", name: "Tang Contemporary Art", type: "Gallery", lat: 13.7262, lng: 100.5139, hours: "11:00 - 19:00 (Closed Mon)", img: "https://images.unsplash.com/photo-1572947650440-e8a97ef053b2?auto=format&fit=crop&w=600&q=80", desc: "Leading international contemporary art gallery at River City Bangkok." },
+            { id: "6", name: "Speedy Grandma", type: "Studio", lat: 13.7342, lng: 100.5158, hours: "13:00 - 19:00 (Closed Mon, Tue)", img: "https://images.unsplash.com/photo-1561214115-f2f134cc4912?auto=format&fit=crop&w=600&q=80", desc: "An iconic underground gallery space pushing experimental art culture." }
         ];
 
         function parseCoordinates(inputStr) {
             if (!inputStr) return null;
             const str = inputStr.trim();
-
             const atMatch = str.match(/@(-?\d+\.\d+),\s*(-?\d+\.\d+)/);
-            if (atMatch) {
-                return { lat: parseFloat(atMatch[1]), lng: parseFloat(atMatch[2]) };
-            }
-
+            if (atMatch) return { lat: parseFloat(atMatch[1]), lng: parseFloat(atMatch[2]) };
             const placeMatch = str.match(/(?:place\/|q=)(-?\d+\.\d+)(?:,|\+|\s+)(-?\d+\.\d+)/);
-            if (placeMatch) {
-                return { lat: parseFloat(placeMatch[1]), lng: parseFloat(placeMatch[2]) };
-            }
-
+            if (placeMatch) return { lat: parseFloat(placeMatch[1]), lng: parseFloat(placeMatch[2]) };
             const directMatch = str.match(/^(-?\d+(?:\.\d+)?)\s*[\s,]\s*(-?\d+(?:\.\d+)?)$/);
-            if (directMatch) {
-                return { lat: parseFloat(directMatch[1]), lng: parseFloat(directMatch[2]) };
-            }
-
+            if (directMatch) return { lat: parseFloat(directMatch[1]), lng: parseFloat(directMatch[2]) };
             const genericMatches = str.match(/-?\d+\.\d+/g);
-            if (genericMatches && genericMatches.length >= 2) {
-                return { lat: parseFloat(genericMatches[0]), lng: parseFloat(genericMatches[1]) };
-            }
-
+            if (genericMatches && genericMatches.length >= 2) return { lat: parseFloat(genericMatches[0]), lng: parseFloat(genericMatches[1]) };
             return null;
         }
 
-        // State Management
+        // Persistent LocalStorage State
         let artSpots = loadArtSpots();
         let favorites = JSON.parse(localStorage.getItem('art_favorites') || '[]');
-        let activeCategory = 'all';
-        let searchQuery = '';
-        let showFavsOnly = false;
-        let map;
-        let markersGroup;
-        let activeMarkerId = null;
-        let spotToDeleteId = null;
-
-        // Navigation & Layers State
-        let baseLayers = {};
-        let currentLayer = 'dark';
-        let routeStart = null;
-        let routeEnd = null;
-        let routePolyline = null;
-        let userLocationMarker = null;
+        let activeCategory = 'all', searchQuery = '', showFavsOnly = false;
+        let map, markersGroup, routePolyline, userLocationMarker;
+        let baseLayers = {}, currentLayer = 'dark';
+        let routeStart = null, routeEnd = null, spotToDeleteId = null;
 
         function loadArtSpots() {
             const saved = localStorage.getItem('art_travel_spots');
-            if (saved) {
-                try {
-                    return JSON.parse(saved);
-                } catch (e) {
-                    console.error("Failed to parse saved spots", e);
-                }
-            }
+            if (saved) { try { return JSON.parse(saved); } catch (e) { console.error(e); } }
             return [...initialSpots];
         }
 
@@ -458,104 +322,56 @@
             localStorage.setItem('art_travel_spots', JSON.stringify(artSpots));
         }
 
-        // Export Data to JSON File
         function exportData() {
-            const dataToExport = {
-                spots: artSpots,
-                favorites: favorites,
-                exportDate: new Date().toISOString()
-            };
-            
-            const jsonStr = JSON.stringify(dataToExport, null, 2);
-            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const dataToExport = { spots: artSpots, favorites: favorites, exportDate: new Date().toISOString() };
+            const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
-            
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.href = url;
-            downloadAnchor.download = `art-travel-backup-${new Date().toISOString().slice(0,10)}.json`;
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            document.body.removeChild(downloadAnchor);
-            URL.revokeObjectURL(url);
+            const a = document.createElement('a'); a.href = url; a.download = `art-travel-backup-${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
         }
 
-        // Import Data from JSON File
         function importData(event) {
             const file = event.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const importedData = JSON.parse(e.target.result);
                     if (importedData.spots && Array.isArray(importedData.spots)) {
-                        if (confirm(`พบข้อมูลสถานที่ ${importedData.spots.length} แห่ง ต้องการแทนที่ข้อมูลปัจจุบันเลยหรือไม่?`)) {
+                        if (confirm(`พบข้อมูลสถานที่ ${importedData.spots.length} แห่ง ต้องการแทนที่ข้อมูลปัจจุบันหรือไม่?`)) {
                             artSpots = importedData.spots;
                             favorites = importedData.favorites || [];
-                            
                             saveArtSpots();
                             localStorage.setItem('art_favorites', JSON.stringify(favorites));
-                            
-                            renderPlacesList();
-                            renderMarkers();
-                            alert('นำเข้าและอัปเดตข้อมูลสำเร็จเรียบร้อยแล้ว!');
+                            renderPlacesList(); renderMarkers(); alert('นำเข้าข้อมูลสำเร็จแล้ว!');
                         }
-                    } else {
-                        alert('รูปแบบไฟล์ JSON ไม่ถูกต้องสำหรับ Project Art Travel');
                     }
-                } catch (error) {
-                    console.error(error);
-                    alert('เกิดข้อผิดพลาดในการอ่านไฟล์ JSON');
-                }
+                } catch (error) { alert('ไฟล์ JSON ไม่ถูกต้อง'); }
                 event.target.value = '';
             };
             reader.readAsText(file);
         }
 
-        const categoryColors = {
-            'Gallery': '#D4AF37',
-            'Art Space': '#FF4A57',
-            'Museum': '#7C3AED',
-            'Studio': '#10B981'
-        };
-
-        const categoryIcons = {
-            'Gallery': 'fa-palette',
-            'Art Space': 'fa-building-columns',
-            'Museum': 'fa-landmark',
-            'Studio': 'fa-wand-magic-sparkles'
-        };
+        const categoryColors = { 'Gallery': '#D4AF37', 'Art Space': '#FF4A57', 'Museum': '#7C3AED', 'Studio': '#10B981' };
+        const categoryIcons = { 'Gallery': 'fa-palette', 'Art Space': 'fa-building-columns', 'Museum': 'fa-landmark', 'Studio': 'fa-wand-magic-sparkles' };
 
         window.onload = function() {
             initMap();
             renderPlacesList();
             setupEventListeners();
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Registration error', err));
+            }
         };
 
         function initMap() {
-            map = L.map('map', {
-                zoomControl: false
-            }).setView([13.7350, 100.5250], 13);
-
-            baseLayers.dark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-                subdomains: 'abcd', maxZoom: 19
-            });
-
-            baseLayers.google = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
-                maxZoom: 20,
-                subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
-            });
-
-            baseLayers.satellite = L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
-                maxZoom: 20,
-                subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
-            });
-
+            map = L.map('map', { zoomControl: false }).setView([13.7350, 100.5250], 13);
+            baseLayers.dark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { subdomains: 'abcd', maxZoom: 19 });
+            baseLayers.google = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+            baseLayers.satellite = L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+            
             baseLayers.dark.addTo(map);
-
             L.control.zoom({ position: 'bottomright' }).addTo(map);
-
             markersGroup = L.layerGroup().addTo(map);
             renderMarkers();
         }
@@ -565,196 +381,93 @@
             map.removeLayer(baseLayers[currentLayer]);
             baseLayers[layerKey].addTo(map);
             currentLayer = layerKey;
-
-            const layerButtonMap = {
-                'dark': 'layerDarkBtn',
-                'google': 'layerGoogleBtn',
-                'satellite': 'layerSatelliteBtn'
-            };
-
-            Object.keys(layerButtonMap).forEach(key => {
-                const btn = document.getElementById(layerButtonMap[key]);
-                if (btn) {
-                    if (key === layerKey) {
-                        btn.className = "px-2.5 py-1.5 rounded-xl font-medium bg-art-gold text-slate-950 transition-all";
-                    } else {
-                        btn.className = "px-2.5 py-1.5 rounded-xl font-medium text-slate-300 hover:text-white transition-all";
-                    }
-                }
+            ['dark', 'google', 'satellite'].forEach(k => {
+                const btn = document.getElementById(`layer${k.charAt(0).toUpperCase() + k.slice(1)}Btn`);
+                if (btn) btn.className = (k === layerKey) ? "px-2 py-1 md:px-2.5 md:py-1.5 rounded-xl font-medium bg-art-gold text-slate-950 transition-all" : "px-2 py-1 md:px-2.5 md:py-1.5 rounded-xl font-medium text-slate-300 transition-all";
             });
         }
 
         function calculateDistanceKm(lat1, lon1, lat2, lon2) {
             const R = 6371;
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = 
-                Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-                Math.sin(dLon/2) * Math.sin(dLon/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c;
+            const dLat = (lat2 - lat1) * Math.PI / 180, dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2)**2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2)**2;
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         }
 
-        function setWalkStart(id) {
-            const spot = artSpots.find(s => s.id === id);
-            if (!spot) return;
-            routeStart = { name: spot.name, lat: spot.lat, lng: spot.lng };
-            updateWalkingInfo();
-        }
-
-        function setWalkEnd(id) {
-            const spot = artSpots.find(s => s.id === id);
-            if (!spot) return;
-            routeEnd = { name: spot.name, lat: spot.lat, lng: spot.lng };
-            updateWalkingInfo();
-        }
+        function setWalkStart(id) { const spot = artSpots.find(s => s.id === id); if (spot) { routeStart = { name: spot.name, lat: spot.lat, lng: spot.lng }; updateWalkingInfo(); } }
+        function setWalkEnd(id) { const spot = artSpots.find(s => s.id === id); if (spot) { routeEnd = { name: spot.name, lat: spot.lat, lng: spot.lng }; updateWalkingInfo(); } }
 
         function updateWalkingInfo() {
-            if (!routeStart || !routeEnd) {
-                if (routeStart) {
-                    alert(`Selected starting point: ${routeStart.name}. Now click "Walk To Here" on target place!`);
-                }
-                return;
-            }
-
+            if (!routeStart || !routeEnd) return;
             const dist = calculateDistanceKm(routeStart.lat, routeStart.lng, routeEnd.lat, routeEnd.lng);
             const walkTimeMins = Math.round((dist / 4.5) * 60);
-            
-            const distStr = dist < 1 ? `${Math.round(dist * 1000)} m` : `${dist.toFixed(2)} km`;
-
             document.getElementById('routeFrom').textContent = routeStart.name;
             document.getElementById('routeTo').textContent = routeEnd.name;
-            document.getElementById('routeDistance').textContent = distStr;
+            document.getElementById('routeDistance').textContent = dist < 1 ? `${Math.round(dist * 1000)} m` : `${dist.toFixed(2)} km`;
             document.getElementById('routeTime').textContent = `${walkTimeMins} mins`;
-            
-            const gmapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${routeStart.lat},${routeStart.lng}&destination=${routeEnd.lat},${routeEnd.lng}&travelmode=walking`;
-            document.getElementById('gmapsNavBtn').href = gmapsUrl;
-
+            document.getElementById('gmapsNavBtn').href = `https://www.google.com/maps/dir/?api=1&origin=${routeStart.lat},${routeStart.lng}&destination=${routeEnd.lat},${routeEnd.lng}&travelmode=walking`;
             document.getElementById('walkingBanner').classList.remove('hidden');
 
             if (routePolyline) map.removeLayer(routePolyline);
-            routePolyline = L.polyline([[routeStart.lat, routeStart.lng], [routeEnd.lat, routeEnd.lng]], {
-                color: '#FF4A57',
-                weight: 4,
-                dashArray: '8, 8',
-                opacity: 0.85
-            }).addTo(map);
-
-            map.fitBounds(routePolyline.getBounds(), { padding: [50, 50] });
+            routePolyline = L.polyline([[routeStart.lat, routeStart.lng], [routeEnd.lat, routeEnd.lng]], { color: '#FF4A57', weight: 4, dashArray: '8, 8' }).addTo(map);
+            map.fitBounds(routePolyline.getBounds(), { padding: [40, 40] });
         }
 
         function clearWalkingRoute() {
-            routeStart = null;
-            routeEnd = null;
-            if (routePolyline) {
-                map.removeLayer(routePolyline);
-                routePolyline = null;
-            }
+            routeStart = null; routeEnd = null;
+            if (routePolyline) map.removeLayer(routePolyline);
             document.getElementById('walkingBanner').classList.add('hidden');
         }
 
         function getUserLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(position => {
-                    const lat = position.coords.latitude;
-                    const lng = position.coords.longitude;
-
+                    const lat = position.coords.latitude, lng = position.coords.longitude;
                     if (userLocationMarker) map.removeLayer(userLocationMarker);
-
-                    const userIcon = L.divIcon({
-                        className: 'user-marker',
-                        html: `<div class="w-8 h-8 bg-blue-500 rounded-full border-2 border-white flex items-center justify-center text-white shadow-lg animate-bounce"><i class="fa-solid fa-person-walking text-xs"></i></div>`,
-                        iconSize: [32, 32], iconAnchor: [16, 16]
-                    });
-
-                    userLocationMarker = L.marker([lat, lng], { icon: userIcon }).addTo(map);
-                    userLocationMarker.bindPopup("<b>Your Current Location</b>").openPopup();
-
-                    routeStart = { name: "My Current Location (GPS)", lat: lat, lng: lng };
+                    userLocationMarker = L.marker([lat, lng], {
+                        icon: L.divIcon({ html: `<div class="w-8 h-8 bg-blue-500 rounded-full border-2 border-white flex items-center justify-center text-white shadow-lg animate-bounce"><i class="fa-solid fa-person-walking text-xs"></i></div>`, iconSize: [32, 32], iconAnchor: [16, 16] })
+                    }).addTo(map);
+                    routeStart = { name: "GPS Location", lat, lng };
                     map.flyTo([lat, lng], 15);
-                    alert("Your GPS location set as Route Starting Point! Click 'Walk To Here' on any art spot to calculate distance.");
-                }, () => {
-                    alert("Could not get your GPS location. Please allow browser location access.");
                 });
-            } else {
-                alert("Geolocation is not supported by your browser.");
             }
         }
 
         function renderMarkers() {
             markersGroup.clearLayers();
-            const filtered = getFilteredSpots();
-
-            filtered.forEach(spot => {
+            getFilteredSpots().forEach(spot => {
                 const color = categoryColors[spot.type] || '#D4AF37';
-                const iconClass = categoryIcons[spot.type] || 'fa-location-dot';
-
-                const customIcon = L.divIcon({
-                    className: 'custom-marker-wrapper',
-                    html: `
-                        <div class="custom-marker w-10 h-10 rounded-2xl flex items-center justify-center text-slate-950 font-bold shadow-xl border-2 border-white/20" 
-                             style="background: ${color}; color: #0F172A;">
-                            <i class="fa-solid ${iconClass} text-sm"></i>
-                        </div>
-                    `,
-                    iconSize: [40, 40],
-                    iconAnchor: [20, 20],
-                    popupAnchor: [0, -22]
-                });
-
-                const marker = L.marker([spot.lat, spot.lng], { icon: customIcon });
                 const isFav = favorites.includes(spot.id);
+
+                const marker = L.marker([spot.lat, spot.lng], {
+                    icon: L.divIcon({
+                        html: `<div class="custom-marker w-10 h-10 rounded-2xl flex items-center justify-center font-bold shadow-xl border-2 border-white/20" style="background: ${color}; color: #0F172A;"><i class="fa-solid ${categoryIcons[spot.type] || 'fa-location-dot'} text-sm"></i></div>`,
+                        iconSize: [40, 40], iconAnchor: [20, 20], popupAnchor: [0, -20]
+                    })
+                });
 
                 const popupHTML = `
                     <div class="p-0 text-slate-100">
-                        <div class="relative h-32 w-full overflow-hidden">
+                        <div class="relative h-28 w-full overflow-hidden">
                             <img src="${spot.img}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80'">
-                            <span class="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md text-slate-950" style="background: ${color}">
-                                ${spot.type}
-                            </span>
+                            <span class="absolute top-2 left-2 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md text-slate-950" style="background: ${color}">${spot.type}</span>
                             <div class="absolute top-2 right-2 flex gap-1">
-                                <button onclick="openEditModal('${spot.id}')" title="Edit Spot" class="w-7 h-7 rounded-lg bg-slate-900/80 hover:bg-slate-900 text-white flex items-center justify-center text-xs backdrop-blur-md transition-colors border border-white/10">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </button>
-                                <button onclick="promptDeleteSpot('${spot.id}')" title="Delete Spot" class="w-7 h-7 rounded-lg bg-red-600/80 hover:bg-red-600 text-white flex items-center justify-center text-xs backdrop-blur-md transition-colors border border-white/10">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
+                                <button onclick="openEditModal('${spot.id}')" class="w-7 h-7 rounded-lg bg-slate-900/80 text-white flex items-center justify-center text-xs border border-white/10"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button onclick="promptDeleteSpot('${spot.id}')" class="w-7 h-7 rounded-lg bg-red-600/80 text-white flex items-center justify-center text-xs border border-white/10"><i class="fa-solid fa-trash-can"></i></button>
                             </div>
                         </div>
-                        <div class="p-4 space-y-2">
-                            <h4 class="font-serif text-base font-bold text-white leading-snug">${spot.name}</h4>
-                            <p class="text-xs text-amber-400 font-medium"><i class="fa-regular fa-clock mr-1"></i> ${spot.hours}</p>
-                            <p class="text-xs text-slate-300 line-clamp-2">${spot.desc}</p>
-
-                            <div class="grid grid-cols-2 gap-1.5 pt-1">
-                                <button onclick="setWalkStart('${spot.id}')" class="text-[11px] font-semibold bg-slate-800 hover:bg-slate-700 text-amber-300 py-1.5 px-2 rounded-lg border border-amber-400/30 transition-colors flex items-center justify-center gap-1">
-                                    <i class="fa-solid fa-person-walking"></i> Walk From Here
-                                </button>
-                                <button onclick="setWalkEnd('${spot.id}')" class="text-[11px] font-semibold bg-slate-800 hover:bg-slate-700 text-art-gold py-1.5 px-2 rounded-lg border border-art-gold/30 transition-colors flex items-center justify-center gap-1">
-                                    <i class="fa-solid fa-location-dot"></i> Walk To Here
-                                </button>
-                            </div>
-                            
-                            <div class="pt-2 flex items-center justify-between border-t border-white/10">
-                                <button onclick="toggleFavorite('${spot.id}')" class="text-xs font-semibold px-3 py-1.5 rounded-lg border border-white/10 hover:bg-slate-800 transition-colors flex items-center gap-1.5 ${isFav ? 'text-amber-400 border-amber-400/40' : 'text-slate-300'}">
-                                    <i class="fa-${isFav ? 'solid' : 'regular'} fa-bookmark"></i>
-                                    <span>${isFav ? 'Saved' : 'Save'}</span>
-                                </button>
-                                <a href="https://www.google.com/maps/search/?api=1&query=${spot.lat},${spot.lng}" target="_blank" class="text-xs text-art-gold hover:underline flex items-center gap-1">
-                                    <span>Google Maps</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-                                </a>
+                        <div class="p-3 space-y-1.5">
+                            <h4 class="font-serif text-sm font-bold leading-snug">${spot.name}</h4>
+                            <p class="text-[11px] text-amber-400"><i class="fa-regular fa-clock mr-1"></i>${spot.hours}</p>
+                            <p class="text-[11px] text-slate-300 line-clamp-2">${spot.desc}</p>
+                            <div class="grid grid-cols-2 gap-1 pt-1">
+                                <button onclick="setWalkStart('${spot.id}')" class="text-[10px] font-semibold bg-slate-800 text-amber-300 py-1 rounded border border-amber-400/30">Walk From</button>
+                                <button onclick="setWalkEnd('${spot.id}')" class="text-[10px] font-semibold bg-slate-800 text-art-gold py-1 rounded border border-art-gold/30">Walk To</button>
                             </div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
 
                 marker.bindPopup(popupHTML);
-                marker.on('click', () => {
-                    activeMarkerId = spot.id;
-                    highlightCardInList(spot.id);
-                });
-
                 markersGroup.addLayer(marker);
             });
         }
@@ -762,8 +475,7 @@
         function getFilteredSpots() {
             return artSpots.filter(spot => {
                 const matchesCategory = activeCategory === 'all' || spot.type === activeCategory;
-                const matchesSearch = spot.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                                      spot.desc.toLowerCase().includes(searchQuery.toLowerCase());
+                const matchesSearch = spot.name.toLowerCase().includes(searchQuery.toLowerCase()) || spot.desc.toLowerCase().includes(searchQuery.toLowerCase());
                 const matchesFav = !showFavsOnly || favorites.includes(spot.id);
                 return matchesCategory && matchesSearch && matchesFav;
             });
@@ -772,17 +484,11 @@
         function renderPlacesList() {
             const listContainer = document.getElementById('placesList');
             const spots = getFilteredSpots();
-            
             document.getElementById('spotCount').textContent = `Showing ${spots.length} place${spots.length !== 1 ? 's' : ''}`;
             document.getElementById('favCount').textContent = favorites.length;
 
             if (spots.length === 0) {
-                listContainer.innerHTML = `
-                    <div class="text-center py-10 px-4 text-slate-500">
-                        <i class="fa-solid fa-compass text-3xl mb-2 opacity-50"></i>
-                        <p class="text-sm">No art spots match your filter.</p>
-                    </div>
-                `;
+                listContainer.innerHTML = `<div class="text-center py-8 text-slate-500 text-xs">No art spots found.</div>`;
                 return;
             }
 
@@ -791,74 +497,46 @@
                 const color = categoryColors[spot.type] || '#D4AF37';
 
                 return `
-                    <div id="card-${spot.id}" onclick="selectSpot('${spot.id}')" class="glass-card hover:border-art-gold/50 transition-all duration-200 rounded-xl p-3 cursor-pointer group relative">
-                        <div class="flex gap-3">
-                            <img src="${spot.img}" class="w-20 h-20 rounded-lg object-cover flex-shrink-0" onerror="this.src='https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80'">
-                            <div class="flex-1 min-w-0 pr-12">
-                                <div class="flex items-center gap-1 mb-1">
-                                    <span class="text-[10px] font-semibold px-2 py-0.5 rounded text-slate-950 uppercase" style="background: ${color}">${spot.type}</span>
-                                </div>
-                                <h4 class="text-sm font-semibold text-white group-hover:text-art-gold transition-colors truncate">${spot.name}</h4>
-                                <p class="text-xs text-slate-400 mt-1 line-clamp-1"><i class="fa-regular fa-clock mr-1"></i> ${spot.hours}</p>
-                                <p class="text-xs text-slate-400 mt-0.5 line-clamp-1">${spot.desc}</p>
-                            </div>
-
-                            <div class="absolute top-3 right-3 flex flex-col gap-1 items-center">
-                                <button onclick="event.stopPropagation(); toggleFavorite('${spot.id}')" title="Bookmark Spot" class="text-slate-400 hover:text-amber-400 p-1">
-                                    <i class="fa-${isFav ? 'solid text-amber-400' : 'regular'} fa-bookmark"></i>
-                                </button>
-                                <button onclick="event.stopPropagation(); openEditModal('${spot.id}')" title="Edit Spot" class="text-slate-400 hover:text-art-gold p-1">
-                                    <i class="fa-solid fa-pen-to-square text-xs"></i>
-                                </button>
-                                <button onclick="event.stopPropagation(); promptDeleteSpot('${spot.id}')" title="Delete Spot" class="text-slate-400 hover:text-red-400 p-1">
-                                    <i class="fa-solid fa-trash-can text-xs"></i>
-                                </button>
-                            </div>
+                    <div id="card-${spot.id}" onclick="selectSpot('${spot.id}')" class="glass-card hover:border-art-gold/50 rounded-xl p-2.5 cursor-pointer group relative flex gap-2.5">
+                        <img src="${spot.img}" class="w-16 h-16 rounded-lg object-cover flex-shrink-0" onerror="this.src='https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80'">
+                        <div class="flex-1 min-w-0 pr-10">
+                            <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded text-slate-950 uppercase" style="background: ${color}">${spot.type}</span>
+                            <h4 class="text-xs font-semibold text-white group-hover:text-art-gold truncate mt-0.5">${spot.name}</h4>
+                            <p class="text-[10px] text-slate-400 truncate mt-0.5"><i class="fa-regular fa-clock mr-1"></i>${spot.hours}</p>
                         </div>
-                    </div>
-                `;
+                        <div class="absolute top-2 right-2 flex flex-col gap-1 items-center">
+                            <button onclick="event.stopPropagation(); toggleFavorite('${spot.id}')" class="text-slate-400 hover:text-amber-400 p-0.5"><i class="fa-${isFav ? 'solid text-amber-400' : 'regular'} fa-bookmark text-xs"></i></button>
+                            <button onclick="event.stopPropagation(); openEditModal('${spot.id}')" class="text-slate-400 hover:text-art-gold p-0.5"><i class="fa-solid fa-pen-to-square text-[10px]"></i></button>
+                            <button onclick="event.stopPropagation(); promptDeleteSpot('${spot.id}')" class="text-slate-400 hover:text-red-400 p-0.5"><i class="fa-solid fa-trash-can text-[10px]"></i></button>
+                        </div>
+                    </div>`;
             }).join('');
         }
 
+        // Action when clicking on spot card (Select & auto-hide sidebar on mobile)
         function selectSpot(id) {
             const spot = artSpots.find(s => s.id === id);
             if (spot) {
-                map.flyTo([spot.lat, spot.lng], 15, { duration: 1.2 });
-                highlightCardInList(id);
-                
+                map.flyTo([spot.lat, spot.lng], 15, { duration: 1 });
                 markersGroup.eachLayer(layer => {
-                    if (layer.getLatLng().lat === spot.lat && layer.getLatLng().lng === spot.lng) {
-                        layer.openPopup();
-                    }
+                    if (layer.getLatLng().lat === spot.lat && layer.getLatLng().lng === spot.lng) layer.openPopup();
                 });
-            }
-        }
-
-        function highlightCardInList(id) {
-            document.querySelectorAll('#placesList > div').forEach(card => {
-                card.classList.remove('border-art-gold', 'bg-slate-800/90');
-            });
-            const activeCard = document.getElementById(`card-${id}`);
-            if (activeCard) {
-                activeCard.classList.add('border-art-gold', 'bg-slate-800/90');
-                activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                
+                // Hide sidebar on mobile screens for seamless user experience
+                if (window.innerWidth < 768) {
+                    document.getElementById('sidebar').classList.add('-translate-x-full');
+                }
             }
         }
 
         function toggleFavorite(id) {
-            if (favorites.includes(id)) {
-                favorites = favorites.filter(fId => fId !== id);
-            } else {
-                favorites.push(id);
-            }
+            favorites = favorites.includes(id) ? favorites.filter(fId => fId !== id) : [...favorites, id];
             localStorage.setItem('art_favorites', JSON.stringify(favorites));
-            renderPlacesList();
-            renderMarkers();
+            renderPlacesList(); renderMarkers();
         }
 
         function openAddModal() {
             document.getElementById('modalTitle').textContent = 'Add New Art Spot';
-            document.getElementById('modalSubtitle').textContent = 'Contribute a new creative space to the Art Travel community.';
             document.getElementById('spotForm').reset();
             document.getElementById('spotId').value = '';
             document.getElementById('locationError').classList.add('hidden');
@@ -868,122 +546,67 @@
         function openEditModal(id) {
             const spot = artSpots.find(s => s.id === id);
             if (!spot) return;
-
             document.getElementById('modalTitle').textContent = 'Edit Art Spot';
-            document.getElementById('modalSubtitle').textContent = 'Update details for ' + spot.name;
-            
             document.getElementById('spotId').value = spot.id;
             document.getElementById('spotName').value = spot.name;
             document.getElementById('spotType').value = spot.type;
             document.getElementById('spotHours').value = spot.hours;
             document.getElementById('spotLocationInput').value = `${spot.lat}, ${spot.lng}`;
-            document.getElementById('locationError').classList.add('hidden');
             document.getElementById('spotImg').value = spot.img;
             document.getElementById('spotDesc').value = spot.desc;
-
             document.getElementById('spotModal').classList.remove('hidden');
         }
 
         function promptDeleteSpot(id) {
             const spot = artSpots.find(s => s.id === id);
             if (!spot) return;
-            
             spotToDeleteId = id;
-            document.getElementById('deleteSpotName').textContent = `Are you sure you want to remove "${spot.name}"?`;
+            document.getElementById('deleteSpotName').textContent = `Remove "${spot.name}"?`;
             document.getElementById('deleteModal').classList.remove('hidden');
         }
 
         function confirmDeleteSpot() {
             if (!spotToDeleteId) return;
-
             artSpots = artSpots.filter(s => s.id !== spotToDeleteId);
             favorites = favorites.filter(fId => fId !== spotToDeleteId);
-            
-            localStorage.setItem('art_favorites', JSON.stringify(favorites));
             saveArtSpots();
-            
-            renderPlacesList();
-            renderMarkers();
-            
+            localStorage.setItem('art_favorites', JSON.stringify(favorites));
+            renderPlacesList(); renderMarkers();
             document.getElementById('deleteModal').classList.add('hidden');
             spotToDeleteId = null;
-        }
-
-        function resetToDefaults() {
-            if (confirm("Restore original art spot places dataset? This will overwrite your current changes.")) {
-                artSpots = [...initialSpots];
-                saveArtSpots();
-                renderPlacesList();
-                renderMarkers();
-                map.flyTo([13.7350, 100.5250], 13);
-            }
         }
 
         function setupEventListeners() {
             document.querySelectorAll('.filter-tab').forEach(tab => {
                 tab.addEventListener('click', () => {
-                    document.querySelectorAll('.filter-tab').forEach(t => {
-                        t.classList.remove('active', 'bg-art-gold', 'text-slate-950');
-                        t.classList.add('bg-slate-800/80', 'text-slate-300');
-                    });
-                    
-                    tab.classList.add('active', 'bg-art-gold', 'text-slate-950');
-                    tab.classList.remove('bg-slate-800/80', 'text-slate-300');
-                    
+                    document.querySelectorAll('.filter-tab').forEach(t => t.className = "filter-tab bg-slate-800/80 text-slate-300 px-3 py-1.5 rounded-lg whitespace-nowrap border border-white/5");
+                    tab.className = "filter-tab active bg-art-gold text-slate-950 font-semibold px-3 py-1.5 rounded-lg whitespace-nowrap";
                     activeCategory = tab.dataset.category;
-                    renderPlacesList();
-                    renderMarkers();
+                    renderPlacesList(); renderMarkers();
                 });
             });
 
-            document.getElementById('searchInput').addEventListener('input', (e) => {
-                searchQuery = e.target.value;
-                renderPlacesList();
-                renderMarkers();
+            document.getElementById('searchInput').addEventListener('input', (e) => { searchQuery = e.target.value; renderPlacesList(); renderMarkers(); });
+            document.getElementById('showFavoritesBtn').addEventListener('click', () => { showFavsOnly = !showFavsOnly; renderPlacesList(); renderMarkers(); });
+            document.getElementById('resetDataBtn').addEventListener('click', () => {
+                if (confirm("Restore default spots?")) { artSpots = [...initialSpots]; saveArtSpots(); renderPlacesList(); renderMarkers(); }
             });
 
-            const showFavsBtn = document.getElementById('showFavoritesBtn');
-            showFavsBtn.addEventListener('click', () => {
-                showFavsOnly = !showFavsOnly;
-                showFavsBtn.classList.toggle('font-bold', showFavsOnly);
-                showFavsBtn.classList.toggle('underline', showFavsOnly);
-                renderPlacesList();
-                renderMarkers();
-            });
-
-            document.getElementById('resetDataBtn').addEventListener('click', resetToDefaults);
-
-            document.getElementById('recenterBtn').addEventListener('click', () => {
-                map.flyTo([13.7350, 100.5250], 13);
-            });
-
-            document.getElementById('toggleSidebarBtn').addEventListener('click', () => {
-                document.getElementById('sidebar').classList.toggle('-translate-x-full');
-            });
+            document.getElementById('recenterBtn').addEventListener('click', () => map.flyTo([13.7350, 100.5250], 13));
+            
+            // Toggle & Close Sidebar Listeners
+            document.getElementById('toggleSidebarBtn').addEventListener('click', () => document.getElementById('sidebar').classList.toggle('-translate-x-full'));
+            document.getElementById('closeSidebarBtn').addEventListener('click', () => document.getElementById('sidebar').classList.add('-translate-x-full'));
 
             document.getElementById('addSpotBtn').addEventListener('click', openAddModal);
-
-            const closeSpotModal = () => document.getElementById('spotModal').classList.add('hidden');
-            document.getElementById('closeModalBtn').addEventListener('click', closeSpotModal);
-            document.getElementById('cancelModalBtn').addEventListener('click', closeSpotModal);
-
-            const closeDeleteModal = () => {
-                document.getElementById('deleteModal').classList.add('hidden');
-                spotToDeleteId = null;
-            };
-            document.getElementById('cancelDeleteBtn').addEventListener('click', closeDeleteModal);
+            document.getElementById('closeModalBtn').addEventListener('click', () => document.getElementById('spotModal').classList.add('hidden'));
+            document.getElementById('cancelModalBtn').addEventListener('click', () => document.getElementById('spotModal').classList.add('hidden'));
+            document.getElementById('cancelDeleteBtn').addEventListener('click', () => document.getElementById('deleteModal').classList.add('hidden'));
             document.getElementById('confirmDeleteBtn').addEventListener('click', confirmDeleteSpot);
-
-            document.getElementById('spotLocationInput').addEventListener('input', () => {
-                document.getElementById('locationError').classList.add('hidden');
-            });
 
             document.getElementById('spotForm').addEventListener('submit', (e) => {
                 e.preventDefault();
-                
-                const locationStr = document.getElementById('spotLocationInput').value;
-                const coords = parseCoordinates(locationStr);
-
+                const coords = parseCoordinates(document.getElementById('spotLocationInput').value);
                 if (!coords || isNaN(coords.lat) || isNaN(coords.lng)) {
                     document.getElementById('locationError').classList.remove('hidden');
                     return;
@@ -995,25 +618,26 @@
                     name: document.getElementById('spotName').value,
                     type: document.getElementById('spotType').value,
                     hours: document.getElementById('spotHours').value || '10:00 - 18:00',
-                    lat: coords.lat,
-                    lng: coords.lng,
+                    lat: coords.lat, lng: coords.lng,
                     img: document.getElementById('spotImg').value || 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80',
-                    desc: document.getElementById('spotDesc').value || 'New user submitted art destination.'
+                    desc: document.getElementById('spotDesc').value || 'New art space'
                 };
 
                 if (spotId) {
-                    const index = artSpots.findIndex(s => s.id === spotId);
-                    if (index !== -1) artSpots[index] = spotData;
+                    const idx = artSpots.findIndex(s => s.id === spotId);
+                    if (idx !== -1) artSpots[idx] = spotData;
                 } else {
                     artSpots.unshift(spotData);
                 }
 
+                // Save automatically into LocalStorage
                 saveArtSpots();
                 renderPlacesList();
                 renderMarkers();
-                closeSpotModal();
+                document.getElementById('spotModal').classList.add('hidden');
                 
-                map.flyTo([spotData.lat, spotData.lng], 15);
+                // Fly to new/updated spot and view map
+                selectSpot(spotData.id);
             });
         }
     </script>
